@@ -42,3 +42,11 @@ asciidoctor {
 			'nofooter': true,
 			'allow-uri-read': ''
 }
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+}

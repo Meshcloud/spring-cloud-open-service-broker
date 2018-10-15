@@ -14,7 +14,7 @@ This project was formerly named Spring Cloud - Cloud Foundry Service Broker. Vie
 
 * https://projects.spring.io/spring-framework/[Spring Framework] 5.x
 * https://projects.spring.io/spring-boot/[Spring Boot] 2.x
-* https://github.com/openservicebrokerapi/servicebroker/[Open Service Broker API] 2.13
+* https://github.com/openservicebrokerapi/servicebroker/[Open Service Broker API] 2.13 / 2.14 regarding async service bindings
 
 == Getting Started
 

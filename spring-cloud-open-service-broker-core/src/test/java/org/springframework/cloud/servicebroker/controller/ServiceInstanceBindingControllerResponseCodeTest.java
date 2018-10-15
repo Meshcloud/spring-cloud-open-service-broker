@@ -23,13 +23,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import org.springframework.cloud.servicebroker.exception.ServiceInstanceBindingDoesNotExistException;
-import org.springframework.cloud.servicebroker.model.binding.CreateServiceInstanceAppBindingResponse;
-import org.springframework.cloud.servicebroker.model.binding.CreateServiceInstanceBindingRequest;
-import org.springframework.cloud.servicebroker.model.binding.CreateServiceInstanceBindingResponse;
-import org.springframework.cloud.servicebroker.model.binding.DeleteServiceInstanceBindingRequest;
-import org.springframework.cloud.servicebroker.model.binding.GetServiceInstanceAppBindingResponse;
-import org.springframework.cloud.servicebroker.model.binding.GetServiceInstanceBindingRequest;
-import org.springframework.cloud.servicebroker.model.binding.GetServiceInstanceBindingResponse;
+import org.springframework.cloud.servicebroker.model.binding.*;
 import org.springframework.cloud.servicebroker.model.catalog.ServiceDefinition;
 import org.springframework.cloud.servicebroker.service.CatalogService;
 import org.springframework.cloud.servicebroker.service.ServiceInstanceBindingService;
@@ -134,11 +128,10 @@ public class ServiceInstanceBindingControllerResponseCodeTest {
 
 	@Test
 	public void deleteServiceBindingWithSuccessGivesExpectedStatus() {
-		ResponseEntity<String> responseEntity = controller
+		ResponseEntity<DeleteServiceInstanceBindingResponse> responseEntity = controller
 				.deleteServiceInstanceBinding(pathVariables, null, null, null, null, null, null);
 
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(responseEntity.getBody()).isEqualTo("{}");
 
 		verify(bindingService).deleteServiceInstanceBinding(any(DeleteServiceInstanceBindingRequest.class));
 	}
@@ -148,7 +141,7 @@ public class ServiceInstanceBindingControllerResponseCodeTest {
 		doThrow(new ServiceInstanceBindingDoesNotExistException("binding-id"))
 				.when(bindingService).deleteServiceInstanceBinding(any(DeleteServiceInstanceBindingRequest.class));
 
-		ResponseEntity<String> responseEntity = controller
+		ResponseEntity<DeleteServiceInstanceBindingResponse> responseEntity = controller
 				.deleteServiceInstanceBinding(pathVariables, null, null, null, null, null, null);
 
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.GONE);

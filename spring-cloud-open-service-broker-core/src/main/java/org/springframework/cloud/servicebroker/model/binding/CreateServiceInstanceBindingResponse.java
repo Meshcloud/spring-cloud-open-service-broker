@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import org.springframework.cloud.servicebroker.model.instance.AsyncServiceInstanceResponse;
 
 import java.util.Objects;
 
@@ -32,11 +33,12 @@ import java.util.Objects;
  */
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class CreateServiceInstanceBindingResponse {
+public class CreateServiceInstanceBindingResponse extends AsyncServiceInstanceResponse {
 	@JsonIgnore
 	protected final boolean bindingExisted;
 
-	protected CreateServiceInstanceBindingResponse(boolean bindingExisted) {
+	protected CreateServiceInstanceBindingResponse(boolean async, String operation, boolean bindingExisted) {
+		super(async, operation);
 		this.bindingExisted = bindingExisted;
 	}
 

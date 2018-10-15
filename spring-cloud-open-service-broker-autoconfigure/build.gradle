@@ -49,3 +49,11 @@ dependencies {
 }
 
 compileJava.dependsOn(processResources)
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+}

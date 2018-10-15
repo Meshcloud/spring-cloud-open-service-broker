@@ -17,239 +17,253 @@
 apply plugin: "base"
 
 buildscript {
-	repositories {
-		maven { url "http://repo.spring.io/plugins-release" }
-	}
-	dependencies {
-		classpath("io.spring.gradle:propdeps-plugin:0.0.10.RELEASE")
-		classpath("io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE")
-		classpath("io.spring.gradle:spring-io-plugin:0.0.8.RELEASE")
-		classpath("org.springframework.cloud:spring-cloud-contract-gradle-plugin:2.0.0.RELEASE")
-		classpath("org.asciidoctor:asciidoctor-gradle-plugin:1.5.3")
-	}
+    repositories {
+        maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "https://nexus.dev.meshcloud.io/repository/maven-snapshots/" }
+    }
+    dependencies {
+        classpath("io.spring.gradle:propdeps-plugin:0.0.10.RELEASE")
+        classpath("io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE")
+        classpath("io.spring.gradle:spring-io-plugin:0.0.8.RELEASE")
+        classpath("org.springframework.cloud:spring-cloud-contract-gradle-plugin:2.0.0.RELEASE")
+        classpath("org.asciidoctor:asciidoctor-gradle-plugin:1.5.3")
+    }
 }
 
 ext {
-	if (!project.hasProperty("springVersion")) {
-		springVersion = "5.0.7.RELEASE"
-	}
-	if (!project.hasProperty("springBootVersion")) {
-		springBootVersion = "2.0.3.RELEASE"
-	}
-	springCloudContractVersion = "2.0.0.RELEASE"
+    if (!project.hasProperty("springVersion")) {
+        springVersion = "5.0.7.RELEASE"
+    }
+    if (!project.hasProperty("springBootVersion")) {
+        springBootVersion = "2.0.3.RELEASE"
+    }
+    springCloudContractVersion = "2.0.0.RELEASE"
 
-	javadocLinks = [
-			"http://docs.oracle.com/javase/8/docs/api/",
-			"http://docs.spring.io/spring/docs/${springVersion}/javadoc-api/",
-	] as String[]
+    javadocLinks = [
+            "http://docs.oracle.com/javase/8/docs/api/",
+            "http://docs.spring.io/spring/docs/${springVersion}/javadoc-api/",
+    ] as String[]
 }
 
 description = "Spring Cloud Service Broker"
 
 configure(allprojects) {
-	group = "org.springframework.cloud"
+    group = "org.springframework.cloud"
 
-	apply plugin: "java"
-	apply plugin: "eclipse"
-	apply plugin: "idea"
-	apply plugin: "jacoco"
-	apply plugin: "pmd"
-	apply plugin: "maven"
-	apply plugin: "propdeps"
-	apply plugin: "propdeps-maven"
-	apply plugin: "propdeps-idea"
-	apply plugin: "propdeps-eclipse"
-	apply plugin: "io.spring.dependency-management"
+    apply plugin: "java"
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+    apply plugin: "jacoco"
+    apply plugin: "pmd"
+    apply plugin: "maven"
+    apply plugin: "propdeps"
+    apply plugin: "propdeps-maven"
+    apply plugin: "propdeps-idea"
+    apply plugin: "propdeps-eclipse"
+    apply plugin: "io.spring.dependency-management"
+    apply plugin: "maven-publish"
 
-	apply from: "${rootProject.projectDir}/publish-maven.gradle"
+    apply from: "${rootProject.projectDir}/publish-maven.gradle"
 
-	repositories {
-		maven { url "https://repo.spring.io/libs-release" }
-	}
+    repositories {
+        maven { url "https://repo.spring.io/libs-release" }
+    }
 
-	if (project.hasProperty("springVersion") || project.hasProperty("springBootVersion")) {
-		repositories {
-			maven { url "https://repo.spring.io/libs-snapshot" }
-		}
-	}
+    if (project.hasProperty("springVersion") || project.hasProperty("springBootVersion")) {
+        repositories {
+            maven { url "https://repo.spring.io/libs-snapshot" }
+        }
+    }
 
-	if (project.hasProperty("platformVersion")) {
-		apply plugin: "spring-io"
+    if (project.hasProperty("platformVersion")) {
+        apply plugin: "spring-io"
 
-		// necessary to resolve the Spring IO versions (which may include snapshots)
-		repositories {
-			maven { url "https://repo.spring.io/libs-snapshot" }
-		}
+        // necessary to resolve the Spring IO versions (which may include snapshots)
+        repositories {
+            maven { url "https://repo.spring.io/libs-snapshot" }
+        }
 
-		dependencyManagement {
-			springIoTestRuntime {
-				imports {
-					mavenBom "io.spring.platform:platform-bom:${platformVersion}"
-				}
-			}
-		}
-	}
+        dependencyManagement {
+            springIoTestRuntime {
+                imports {
+                    mavenBom "io.spring.platform:platform-bom:${platformVersion}"
+                }
+            }
+        }
+    }
 
+    publishing {
+        repositories {
+            maven {
+                // change to point to your repo, e.g. http://my.org/repo
+                url = "https://nexus.dev.meshcloud.io/repository/maven-snapshots/"
+                credentials {
+                    username '<username>'
+                    password '<password>'
+                }
+            }
+        }
+    }
 }
 
 subprojects {
-	task dependencyReport(type: DependencyReportTask)
+    task dependencyReport(type: DependencyReportTask)
 }
 
 configure(subprojects - [project(":spring-cloud-starter-open-service-broker-webmvc")]) {
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
-	[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
-	[compileJava, compileTestJava]*.options*.compilerArgs = [
-			"-Xlint:serial",
-			"-Xlint:varargs",
-			"-Xlint:cast",
-			"-Xlint:classfile",
-			"-Xlint:dep-ann",
-			"-Xlint:divzero",
-			"-Xlint:empty",
-			"-Xlint:finally",
-			"-Xlint:overrides",
-			"-Xlint:path",
-			"-Xlint:-processing",
-			"-Xlint:static",
-			"-Xlint:try",
-			"-Xlint:fallthrough",
-			"-Xlint:rawtypes",
-			"-Xlint:deprecation",
-			"-Xlint:unchecked",
-			"-Xlint:options",
-			"-Werror"
-	]
+    [compileJava, compileTestJava]*.options*.compilerArgs = [
+            "-Xlint:serial",
+            "-Xlint:varargs",
+            "-Xlint:cast",
+            "-Xlint:classfile",
+            "-Xlint:dep-ann",
+            "-Xlint:divzero",
+            "-Xlint:empty",
+            "-Xlint:finally",
+            "-Xlint:overrides",
+            "-Xlint:path",
+            "-Xlint:-processing",
+            "-Xlint:static",
+            "-Xlint:try",
+            "-Xlint:fallthrough",
+            "-Xlint:rawtypes",
+            "-Xlint:deprecation",
+            "-Xlint:unchecked",
+            "-Xlint:options",
+            "-Werror"
+    ]
 
-	javadoc {
-		description = "Generates project-level javadoc for use in -javadoc jar"
+    javadoc {
+        description = "Generates project-level javadoc for use in -javadoc jar"
 
-		options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
-		options.author = true
-		options.header = project.name
-		options.use = true
-		options.links(javadocLinks)
-		options.addStringOption('Xdoclint:none', '-quiet')
-	}
+        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+        options.author = true
+        options.header = project.name
+        options.use = true
+        options.links(javadocLinks)
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
 
-	task sourcesJar(type: Jar, dependsOn: classes) {
-		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-		classifier = "sources"
-		from sourceSets.main.allSource
-	}
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        classifier = "sources"
+        from sourceSets.main.allSource
+    }
 
-	task javadocJar(type: Jar) {
-		classifier = "javadoc"
-		from javadoc
-	}
+    task javadocJar(type: Jar) {
+        classifier = "javadoc"
+        from javadoc
+    }
 
-	task testsJar(type: Jar) {
-		classifier = "tests"
-		from sourceSets.test.output
-	}
+    task testsJar(type: Jar) {
+        classifier = "tests"
+        from sourceSets.test.output
+    }
 
-	artifacts {
-		archives sourcesJar
-		archives javadocJar
-		archives testsJar
-	}
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+        archives testsJar
+    }
 
-	test {
-		reports.junitXml.enabled = true
-	}
+    test {
+        reports.junitXml.enabled = true
+    }
 }
 
 configure(rootProject) {
-	task sourcesJar(type: Jar, dependsOn: classes) {
-		classifier = "sources"
-		from sourceSets.main.allSource
-	}
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = "sources"
+        from sourceSets.main.allSource
+    }
 
-	task javadocJar(type: Jar, dependsOn: javadoc) {
-		classifier = "javadoc"
-		from javadoc
-	}
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = "javadoc"
+        from javadoc
+    }
 
-	task apidocs(type: Javadoc) {
-		group = "Documentation"
-		description = "Generates aggregated Javadoc API documentation."
-		title = "${rootProject.description} ${version} API"
+    task apidocs(type: Javadoc) {
+        group = "Documentation"
+        description = "Generates aggregated Javadoc API documentation."
+        title = "${rootProject.description} ${version} API"
 
-		options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
-		options.author = true
-		options.header = rootProject.description
-		options.links(javadocLinks)
+        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+        options.author = true
+        options.header = rootProject.description
+        options.links(javadocLinks)
 
-		source subprojects.collect { project ->
-			project.sourceSets.main.allJava
-		}
+        source subprojects.collect { project ->
+            project.sourceSets.main.allJava
+        }
 
-		classpath = files(subprojects.collect { project ->
-			project.sourceSets.main.compileClasspath
-		})
+        classpath = files(subprojects.collect { project ->
+            project.sourceSets.main.compileClasspath
+        })
 
-		maxMemory = "1024m"
-		destinationDir = new File(buildDir, "apidocs")
-	}
+        maxMemory = "1024m"
+        destinationDir = new File(buildDir, "apidocs")
+    }
 
-	task docsZip(type: Zip, dependsOn: [':spring-cloud-open-service-broker-docs:asciidoctor']) {
-		group = "Distribution"
-		classifier = "docs"
-		description = "Builds -${classifier} archive containing api and reference " +
-				"for deployment."
+    task docsZip(type: Zip, dependsOn: [':spring-cloud-open-service-broker-docs:asciidoctor']) {
+        group = "Distribution"
+        classifier = "docs"
+        description = "Builds -${classifier} archive containing api and reference " +
+                "for deployment."
 
-		from(apidocs) {
-			into "apidocs"
-		}
-		println project.tasks.findByPath(':spring-cloud-open-service-broker-docs:asciidoctor')
-		from(project.tasks.findByPath(':spring-cloud-open-service-broker-docs:asciidoctor')) {
-			into 'reference'
-		}
-	}
+        from(apidocs) {
+            into "apidocs"
+        }
+        println project.tasks.findByPath(':spring-cloud-open-service-broker-docs:asciidoctor')
+        from(project.tasks.findByPath(':spring-cloud-open-service-broker-docs:asciidoctor')) {
+            into 'reference'
+        }
+    }
 
-	artifacts {
-		archives sourcesJar
-		archives javadocJar
-		archives docsZip
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+        archives docsZip
 
-	}
+    }
 
-	task dist(dependsOn: assemble) {
-		group = "Distribution"
-		description = "Builds -dist and -docs distribution archives."
-	}
+    task dist(dependsOn: assemble) {
+        group = "Distribution"
+        description = "Builds -dist and -docs distribution archives."
+    }
 }
 
 
 pmd {
-	ruleSetFiles = files("${project.rootDir}/config/pmdRuleSet.xml")
+    ruleSetFiles = files("${project.rootDir}/config/pmdRuleSet.xml")
 }
 
 pmdTest {
-	ruleSetFiles = files("${project.rootDir}/config/pmdTestRuleSet.xml")
+    ruleSetFiles = files("${project.rootDir}/config/pmdTestRuleSet.xml")
 }
 
 task codeCoverageReport(type: JacocoReport) {
-	executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
 
-	subprojects.each {
-		sourceSets it.sourceSets.main
-	}
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
 
-	reports {
-		xml.enabled true
-		xml.destination new File("${buildDir}/reports/jacoco/report.xml")
-		html.enabled false
-		csv.enabled false
-	}
+    reports {
+        xml.enabled true
+        xml.destination new File("${buildDir}/reports/jacoco/report.xml")
+        html.enabled false
+        csv.enabled false
+    }
 }
 
 codeCoverageReport.dependsOn {
-	subprojects*.test
+    subprojects*.test
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = "4.6"
+    gradleVersion = "4.6"
 }

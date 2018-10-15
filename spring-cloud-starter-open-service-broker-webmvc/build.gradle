@@ -34,3 +34,15 @@ install {
 		}
 	}
 }
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+			pom {
+				packaging = "pom"
+				description = "Spring Cloud Open Service Broker Web MVC Starter"
+			}
+		}
+	}
+}

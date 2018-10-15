@@ -17,14 +17,9 @@
 package org.springframework.cloud.servicebroker.controller;
 
 import org.junit.Test;
-import org.springframework.cloud.servicebroker.model.binding.BindResource;
-import org.springframework.cloud.servicebroker.model.binding.CreateServiceInstanceBindingRequest;
+import org.springframework.cloud.servicebroker.model.binding.*;
 import org.springframework.cloud.servicebroker.model.binding.CreateServiceInstanceBindingRequest.CreateServiceInstanceBindingRequestBuilder;
-import org.springframework.cloud.servicebroker.model.binding.CreateServiceInstanceBindingResponse;
-import org.springframework.cloud.servicebroker.model.binding.DeleteServiceInstanceBindingRequest;
 import org.springframework.cloud.servicebroker.model.ServiceBrokerRequest;
-import org.springframework.cloud.servicebroker.model.binding.GetServiceInstanceBindingRequest;
-import org.springframework.cloud.servicebroker.model.binding.GetServiceInstanceBindingResponse;
 import org.springframework.cloud.servicebroker.service.ServiceInstanceBindingService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -120,8 +115,9 @@ public class ServiceInstanceBindingControllerRequestTest extends ControllerReque
 		}
 
 		@Override
-		public void deleteServiceInstanceBinding(DeleteServiceInstanceBindingRequest request) {
+		public DeleteServiceInstanceBindingResponse deleteServiceInstanceBinding(DeleteServiceInstanceBindingRequest request) {
 			assertThat(request).isEqualTo(expectedRequest);
+			return DeleteServiceInstanceBindingResponse.builder().build();
 		}
 	}
 }

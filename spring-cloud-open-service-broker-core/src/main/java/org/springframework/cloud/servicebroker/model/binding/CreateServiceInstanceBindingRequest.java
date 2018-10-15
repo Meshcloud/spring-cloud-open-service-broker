@@ -36,7 +36,7 @@ import org.springframework.cloud.servicebroker.model.util.ParameterBeanMapper;
  * and message body passed to the service broker by the platform.
  *
  * @see <a href="https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#request-4">Open Service Broker API specification</a>
- * 
+ *
  * @author sgreenberg@pivotal.io
  * @author Scott Frederick
  */

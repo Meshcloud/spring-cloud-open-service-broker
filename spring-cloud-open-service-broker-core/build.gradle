@@ -53,3 +53,11 @@ configurations {
 artifacts {
 	testOutput testsJar
 }
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+}
